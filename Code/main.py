@@ -1,5 +1,5 @@
 import mimetypes #supports proper file types
-import pyperclip #supports copying and pasting text from clipboard
+import pyperclip
 from datetime import datetime
 from pathlib import Path
 from datetime import datetime
