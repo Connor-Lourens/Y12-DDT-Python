@@ -18,4 +18,4 @@ while entry < 1 or entry > 4: #checks if user input is valid
 
 if entry == 1: #if user input is 1
     print("Clipboard History:")
-    print(*history) *#prints all items of the list without square brackets and commas
+    print(*history, sep=", ") #prints all items of the list without square brackets and adds commas
