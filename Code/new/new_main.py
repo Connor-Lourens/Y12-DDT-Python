@@ -23,6 +23,10 @@ if entry == 1:
     print(*history, sep=", ") #prints all items of the list without square brackets and adds commas
 if entry == 2:
     clipboard_entry = input("Enter text to add to clipboard: ")
+    more_entries_query = input("Would you like to add more entries? (Y/N): ").upper()
+    while more_entries_query != "Y" or more_entries_query != "N":
+        print("Please type 'Y' to indicate 'Yes', or 'N' to indicate 'No")
+        more_entries_query = input("Would you like to add more entries? (Y/N): ").upper()
 if entry == 3:
 
     print("")
