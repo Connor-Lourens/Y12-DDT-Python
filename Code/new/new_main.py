@@ -1,6 +1,6 @@
 i = 0 #variable to be used for iteration
 history = [] #clipboard history list
-page_counter = 0
+page_counter = 1
 
 menu = """
 |================================|
@@ -49,30 +49,28 @@ if entry == 2: #user selects adding new clipboard entry
             more_entries_query = input("Would you like to add more entries? (Y/N): ").upper()
 
 if entry == 3: #user selects viewing clipboard entry metadata
+    pages_amount = history / 3 #divides clipboard entries by 3 to get the amount of pages, as 3 per pay
+
     for x in range(3):
         print(range(history[-1, -3])) #prints the last 3 clipboard entries in the list
-        #if list index error:
-            #print only as many entries as there are
-        #else:
         next_page = int(input("Would you like to go to the next page? (Y/N): "))
         if next_page == "Y": #user selects next page
-            print(range(history[-1, -4]))
+            print(history[:3]) #prints first 3 items in the list
         elif next_page == "N": #user doesn't select next page
-            next_step_query = input("""
+            print("""
 |================================|
 |1. Go back a page               |
 |================================|
 |2. Go back to main menu         |
 |================================|
-            What would you like to do next?:\n
-            """)
+""")
+            next_step_query = int(input("What would you like to do next?: "))
             if next_step_query == 1:
                 pass
             elif next_step_query == 2:
                 print(menu)
             else:
                 pass
-        page_counter += 1
 
     print("")
 if entry == 4: #user selects exiting the program
