@@ -39,12 +39,20 @@ if entry == 2: #user selects adding new clipboard entry
     history.append(clipboard_entry)
     more_entries_query = input("Would you like to add more entries? (Y/N): ").upper() #queries user to add more clipboard entries
     if more_entries_query == "Y": #yes option
-        clipboard_entry = input("Enter text to add to clipboard: ")
-        history.append(clipboard_entry)
-    elif more_entries_query == "N": #no option
-        print(menu)
-        entry = int(input("Enter your choice: ")) #gets user input for menu choice
-        pass
+        while more_entries_query != "N":
+            if more_entries_query == "Y":
+                clipboard_entry = input("Enter text to add to clipboard: ")
+                history.append(clipboard_entry)
+                more_entries_query = input("Would you like to add more entries? (Y/N): ").upper() #queries user to add more clipboard entries
+                if more_entries_query == "N":
+                    print(menu)
+                    entry = int(input("Enter your choice: ")) #gets user input for menu choice
+                    #if 1-4
+            else:
+                while more_entries_query != "Y" or more_entries_query != "N":
+                    print("Please type 'Y' to indicate 'Yes', or 'N' to indicate 'No'")
+                    more_entries_query = input("Would you like to add more entries? (Y/N): ").upper()
+
     else:
         while more_entries_query != "Y" or more_entries_query != "N":
             print("Please type 'Y' to indicate 'Yes', or 'N' to indicate 'No'")
