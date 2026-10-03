@@ -1,6 +1,5 @@
 i = 0 # constant variable to be used for iteration
 history = [] #clipboard history list
-page_counter = 1
 
 menu = """
 |================================|
@@ -13,9 +12,7 @@ menu = """
 |================================|
 |2. Add new clipboard entry      |
 |================================|
-|3. View clipboard entry metadata|
-|================================|
-|4. Exit                         |
+|3. Exit                         |
 |================================|
 """
  #saves main menu as variable to reuse
@@ -85,28 +82,5 @@ while True:
                 print("Please type 'Y' to indicate 'Yes', or 'N' to indicate 'No'")
                 more_entries_query = input("Would you like to add more entries? (Y/N): ").upper()
 
-    if entry == 3: #user selects viewing clipboard entry metadata
-        pages_amount = -(-len(history) // 3) #uses negative floor division to divide amount of clipboard entries by 3 then round up (floor division is usually down)
-        print(*history) #prints all the clipboard entries
-        next_page = int(input("Would you like to go to the next page? (Y/N): "))
-        if next_page == "Y": #user selects next page
-            print(*history) #prints first 3 items in the list
-        elif next_page == "N": #user doesn't select next page
-            print("""
-    |================================|
-    |1. Go back a page               |
-    |================================|
-    |2. Go back to main menu         |
-    |================================|
-    """)
-            next_step_query = int(input("What would you like to do next?: "))
-            if next_step_query == 1:
-                pass
-            elif next_step_query == 2:
-                print(menu)
-            else:
-                pass
-    if entry == 4: #user selects exiting the program
+    if entry == 3: #user selects exiting the program
         break
-
-    #different files for different tasks
