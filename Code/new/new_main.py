@@ -17,10 +17,17 @@ menu = """
 """
  #saves main menu as variable to reuse
 print(menu)
-entry = int(input("Enter your choice: ")) #gets user input for menu choice
-while entry < 1 or entry > 3: #checks if user input is valid
-    print("Invalid choice. Please try again") #prints error message
-    entry = int(input("Enter your choice: ")) #gets user input for menu choice  
+def get_entry(): #asks for a menu choice until a valid number from 1-3 is entered
+    while True:
+        try:
+            entry = int(input("Enter your choice: "))
+        except ValueError: #runs if the input isn't a whole number (letters, symbols, blank, float)
+            print("Please enter a number (1-3)")
+            continue
+        if 1 <= entry <= 3:
+            return entry
+        print("Invalid choice. Please try again")
+get_entry()
 while True: #loops until loop broken
     if entry == 1: #user selects viewing clipboard history
         if history == []:
