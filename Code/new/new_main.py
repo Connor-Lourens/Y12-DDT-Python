@@ -27,7 +27,7 @@ def get_entry(): #asks for a menu choice until a valid number from 1-3 is entere
         if 1 <= entry <= 3:
             return entry
         print("Invalid choice. Please try again")
-get_entry()
+entry = get_entry()
 while True: #loops until loop broken
     if entry == 1: #user selects viewing clipboard history
         if history == []:
@@ -36,7 +36,7 @@ while True: #loops until loop broken
             print("Clipboard History:")
             print(*history, sep=", ") #prints all items of the list without square brackets and adds commas
         print(menu)
-        entry = int(input("Enter your choice: ")) #gets user input for menu choice
+        entry = get_entry() #gets user input for menu choice
 
     if entry == 2:  #user selects adding new clipboard entry
         while True:  #main loop for continuous adding if user wants "Y"
@@ -50,10 +50,7 @@ while True: #loops until loop broken
      
             if more_entries_query == "N":    
                 print(menu) #return to menu
-                entry = int(input("Enter your choice: "))
-                while entry < 1 or entry > 3:
-                    print("Invalid choice. Please try again")
-                    entry = int(input("Enter your choice: "))
+                entry = get_entry()
                 break
     if entry == 3: #user selects exiting the program
         break
