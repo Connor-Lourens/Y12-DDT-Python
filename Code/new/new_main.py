@@ -18,10 +18,10 @@ menu = """
  #saves main menu as variable to reuse
 print(menu)
 entry = int(input("Enter your choice: ")) #gets user input for menu choice
-while entry < 1 or entry > 4: #checks if user input is valid
+while entry < 1 or entry > 3: #checks if user input is valid
     print("Invalid choice. Please try again") #prints error message
     entry = int(input("Enter your choice: ")) #gets user input for menu choice  
-while True:
+while True: #loops until loop broken
     if entry == 1: #user selects viewing clipboard history
         if history == []:
             print("Clipboard is empty")
@@ -31,21 +31,25 @@ while True:
         print(menu)
         entry = int(input("Enter your choice: ")) #gets user input for menu choice
 
-    if entry == 2: #user selects adding new clipboard entry
-        clipboard_entry = input("Enter text to add to clipboard: ")
-        history.append(clipboard_entry) #adds to list of clipboard entries
-        while True:
-            more_entries_query = input("Would you like to add more entries? (Y/N): ").upper() #queries user to add more clipboard entries
-            if more_entries_query == "Y":
-                while True:
-                    clipboard_entry = input("Enter text to add to clipboard: ")
-                    history.append(clipboard_entry)
-                if more_entries_query == "N":
+    if entry == 2:  #user selects adding new clipboard entry
+        while True:  #main loop for continuous adding if user wants "Y"
+            clipboard_entry = input("Enter text to add to clipboard: ")
+            history.append(clipboard_entry)  #adds to list of clipboard entries
+            
+            while True: #failsafe loop for Y/N input
+                more_entries_query = input("Would you like to add more entries? (Y/N): ").upper()
+                if more_entries_query in ["Y", "N"]:
                     break
-            else:
-                while more_entries_query != "Y" or more_entries_query != "N":
-                    print("Please type 'Y' to indicate 'Yes', or 'N' to indicate 'No'")
-                    more_entries_query = input("Would you like to add more entries? (Y/N): ").upper()
+                print("Please type 'Y' to indicate 'Yes', or 'N' to indicate 'No'") #default answer is anything but "Y"/"N"
+            
+            if more_entries_query == "N":
+                break
+        
+            print(menu) #return to menu
+            entry = int(input("Enter your choice: "))
+            while entry < 1 or entry > 3:
+                print("Invalid choice. Please try again")
+                entry = int(input("Enter your choice: "))
 
     if entry == 3: #user selects exiting the program
         break
