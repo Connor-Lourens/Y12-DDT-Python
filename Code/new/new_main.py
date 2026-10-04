@@ -33,23 +33,20 @@ while True: #loops until loop broken
 
     if entry == 2:  #user selects adding new clipboard entry
         while True:  #main loop for continuous adding if user wants "Y"
-            clipboard_entry = input("Enter text to add to clipboard: ")
-            history.append(clipboard_entry)  #adds to list of clipboard entries
+            history.append(input("Enter text to add to clipboard: ")) #adds to list of clipboard entries after asking question
             
             while True: #failsafe loop for Y/N input
                 more_entries_query = input("Would you like to add more entries? (Y/N): ").upper()
                 if more_entries_query in ["Y", "N"]:
                     break
                 print("Please type 'Y' to indicate 'Yes', or 'N' to indicate 'No'") #default answer is anything but "Y"/"N"
-            
-            if more_entries_query == "N":
-                break
-        
-            print(menu) #return to menu
-            entry = int(input("Enter your choice: "))
-            while entry < 1 or entry > 3:
-                print("Invalid choice. Please try again")
+     
+            if more_entries_query == "N":    
+                print(menu) #return to menu
                 entry = int(input("Enter your choice: "))
-
+                while entry < 1 or entry > 3:
+                    print("Invalid choice. Please try again")
+                    entry = int(input("Enter your choice: "))
+                break
     if entry == 3: #user selects exiting the program
         break
