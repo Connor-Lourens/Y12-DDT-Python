@@ -80,8 +80,4 @@ while query not in ["Y", "N"]:
         elif query == "N":
             break
 
-
-
-
-
 root.mainloop() # execute Tkinter
