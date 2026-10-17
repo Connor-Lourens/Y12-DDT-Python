@@ -52,26 +52,36 @@ button.pack(fill="x", pady=5)
 divider = tk.Frame(root, height=2, bg="gray")
 divider.pack(fill="x", pady=10)
 
-query = input("Have you cleared the clipboard? (Y/N): ")
-label_1 = tk.Label(root, text=f"{clipboard[-1]} ⌘0")
-label_1.pack()
-label_2 = tk.Label(root, text=f"{clipboard[-2]} ⌘1")
-label_2.pack()
-label_3 = tk.Label(root, text=f"{clipboard[-3]} ⌘2")
-label_3.pack()
-label_4= tk.Label(root, text=f"{clipboard[-4]} ⌘3")
-label_4.pack()
-label_5 = tk.Label(root, text=f"{clipboard[-5]} ⌘4")
-label_5.pack()
-label_6 = tk.Label(root, text=f"{clipboard[-6]} ⌘5")
-label_6.pack()
-label_7 = tk.Label(root, text=f"{clipboard[-7]} ⌘6")
-label_7.pack()
-label_8 = tk.Label(root, text=f"{clipboard[-8]} ⌘7")
-label_8.pack()
-label_9 = tk.Label(root, text=f"{clipboard[-9]}! ⌘8")
-label_9.pack()
-label_10 = tk.Label(root, text=f"{clipboard[-10]} ⌘9")
-label_10.pack()
+query = input("Have you cleared the clipboard? (Y/N): ").upper()
+while query not in ["Y", "N"]:
+    query = input("Please enter an option that is Y for yes, or N for no")
+    if query in ["Y", "N"]:
+        if query == "Y":
+            label_1 = tk.Label(root, text=f"{clipboard[-1]} ⌘0")
+            label_1.pack()
+            label_2 = tk.Label(root, text=f"{clipboard[-2]} ⌘1")
+            label_2.pack()
+            label_3 = tk.Label(root, text=f"{clipboard[-3]} ⌘2")
+            label_3.pack()
+            label_4= tk.Label(root, text=f"{clipboard[-4]} ⌘3")
+            label_4.pack()
+            label_5 = tk.Label(root, text=f"{clipboard[-5]} ⌘4")
+            label_5.pack()
+            label_6 = tk.Label(root, text=f"{clipboard[-6]} ⌘5")
+            label_6.pack()
+            label_7 = tk.Label(root, text=f"{clipboard[-7]} ⌘6")
+            label_7.pack()
+            label_8 = tk.Label(root, text=f"{clipboard[-8]} ⌘7")
+            label_8.pack()
+            label_9 = tk.Label(root, text=f"{clipboard[-9]}! ⌘8")
+            label_9.pack()
+            label_10 = tk.Label(root, text=f"{clipboard[-10]} ⌘9")
+            label_10.pack()
+        elif query == "N":
+            break
+
+
+
+
 
 root.mainloop() # execute Tkinter
