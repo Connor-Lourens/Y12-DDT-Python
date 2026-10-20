@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter.font import nametofont
 
 clipboard = ["print('Hello World')", "import random", "total_lines = sum(1 for line in f)","{word}: {count}","россия",
-             "😎","johnsmith@gmail.com", "password", "https://classroom.google.com/c/ODQyNDM1MTYxNjUz/a/ODY0NjcxMjc3NDEw/details", "Clipboard Entry 1!"]
+             "😎","johnsmith@gmail.com", "password", "https://classroom.google.com/c/ODQyNDM1MTYxNjUz/a/ODY0NjcxMjc3NDEw/details", "Clipboard Entry 10!"]
 
 root = tk.Tk() #create root window
 
@@ -16,6 +16,9 @@ i = 0 #integer that will change based on iteration
 labels = []
 row_frames = []
 commands = []
+over_300_pixels = { #key value pairs of the clipboard entry and True or False if >300 pixels
+    }
+
 
 def quit_program(): #function when quit button is clicked
     quit()
@@ -32,15 +35,19 @@ def clear_clipboard():
     root.geometry('375x480')
 
 def check_length():
-    label = tk.Label(row_frames[i], text=f"{clipboard[(i-1)]}", wraplength=300, anchor="w", justify="left") #clipboard entry label wihin row_frame is added with a restriction of 220px across, whilst left aligned even if multiple lines long as well as space on right for commands
-    label.grid(row=0, column=0, sticky="ew", padx=(0, 10))
-    widget_font = nametofont(label.cget("font")) #extract font
-    pixel_width = widget_font.measure(clipboard[i])
-    print(pixel_width)
-    if pixel_width > 300:
-        print(f"{clipboard[i]} is lreater than 300 pixels")
-    else:
-        print(f"{clipboard[i]} is Less than 300 pixels")
+    text_to_check_character = 0 #index iteration number throughout loop
+    widget_font = nametofont(label.cget("font")) #extract font and text to check
+    text_to_check = clipboard[i] #string storing characters
+    text_within_300 = "" #stores characters within 300px
+    while text_to_check_character < len(text_to_check):
+        next_character = text_to_check[text_to_check_character] #looping through characters
+        if widget_font.measure(text_within_300 + next_character) > 300: #check if next character added on exceeds 300 pixels
+            break
+        text_within_300 += next_character #adds next character to string
+        text_to_check_character += 1
+    width_within_300 = text_within_300
+    width_beyond_300 = text_to_check[text_to_check_character:]
+    return width_within_300, width_beyond_300
 
 #all widgets will be here
 label = tk.Label(root, text="Select the clip to copy the entry to your clipboard!", fg="#B1B1B1") #creates text in root layer
@@ -52,10 +59,11 @@ for i in range(10): #creates 10 clipboard entries
     row_frame.columnconfigure(0, weight=1) #column 0 expands, and absorbs space in between column 1
     row_frame.pack(fill="x", padx=15, pady=2) #stores rows vertically with invisible box stretching across to add a padding of 10px across and 2 up and down
     row_frames.append(row_frame) #stores for easy deletion
-    label = tk.Label(row_frame, text=f"{clipboard[(i)]}", wraplength=300, anchor="w", justify="left") #clipboard entry label wihin row_frame is added with a restriction of 220px across, whilst left aligned even if multiple lines long as well as space on right for commands
-    label.grid(row=0, column=0, sticky="ew", padx=(0, 10)) #uses grid for rows and column easier placing labels at 0,0 within row frame whilst being stretched from west to east and with padding of 10 sides on both
-    check_length()
-    command = tk.Label(row_frame, text=f"▽ ⌘ {i}", fg="#B1B1B1", anchor="e", justify="right") #separate label created within same row of light gray right aligned
+    width_within_300, width_beyond_300 = check_length()
+    label = tk.Label(row_frame, text=f"{width_within_300}", wraplength=300, anchor="w", justify="left") #clipboard entry label wihin row_frame is added with a restriction of 220px across, whilst left aligned even if multiple lines long as well as space on right for commands
+    label.grid(row=0, column=0, sticky="ew", padx=(0, 10)) #uses grid for rows and column easier placing labels at 0,0 within row frame whilst being stretched from west to east and with padding of 10 sides on bot
+
+    command = tk.Label(row_frame, text=f"⌘ {i}", fg="#B1B1B1", anchor="e", justify="right") #separate label created within same row of light gray right aligned
     command.grid(row=0, column=1, sticky="e", padx=(0, 0)) #command text placed in next column right aligned
     commands.append(command)
     labels.append(label) #adds individual labels to list to store for later
@@ -74,5 +82,3 @@ button.pack(fill="x", padx=80, pady=5)
 divider = tk.Frame(root, height=2, bg="#808080")
 divider.pack(fill="x", pady=10)
 root.mainloop() # execute Tkinter
-
-split_multiline_text()
