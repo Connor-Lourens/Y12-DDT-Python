@@ -11,7 +11,7 @@ with open("clipboard.txt", "w", encoding="utf-8") as file: #save clipboard entri
         file.write(entry + "\n")
 
 with open("clipboard.txt", "r", encoding="utf-8") as file: #load clipboard entries
-    clipboard = file.read().splitlines() #puts clipboard entries on other lines
+    clipboard = file.read() #puts clipboard entries on other lines
 
 root = tk.Tk() #create root window
 
@@ -21,14 +21,27 @@ height_dimensions = { #amount of clipboard entries
     1: 210,
     2: 230,
     3: 260,
-    4: 280,
-    5: 310,
+    4: 300,
+    5: 320,
     6: 340,
     7: 360,
     8: 390,
     9: 410,
     10:440
 }
+
+with open("clipboard.txt", "w", encoding="utf-8") as file:
+    paste = pyperclip.paste()
+    file.write(paste) #creates new clipboard entries
+
+with open("clipboard.txt", "r", encoding="utf-8") as file: #opens .txt file
+    clipboard = file.read().split() #string becomes list of separate entries
+
+num_entries = len(clipboard) #counts list entries
+    
+count = clipboard.count("\n")
+with open("clipboard.txt", "r", encoding="utf-8") as file:
+    newline_count = file.read().count("\n")
 
 num_entries = len(clipboard)
 window_height = height_dimensions.get(num_entries) #retrieves dict value corresponing with key

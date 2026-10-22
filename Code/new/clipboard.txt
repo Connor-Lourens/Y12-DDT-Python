@@ -1,10 +1,1 @@
-print('Hello World')
-import random
-total_lines = sum(1 for line in f)
-{word}: {count}
-россия
-😎
-johnsmith@gmail.com
-password
-https://classroom.google.com/c/ODQyNDM1MTYxNjUz/a/ODY0NjcxMjc3NDEw/details
-Wood.png
+with open("clipboard.txt", "r", encoding="utf-8") as file:
