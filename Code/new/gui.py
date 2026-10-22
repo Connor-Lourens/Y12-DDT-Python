@@ -1,15 +1,22 @@
+import pyperclip
 import tkinter as tk
 from tkinter.font import nametofont 
 from tkinter import messagebox
 
-clipboard = ["print('Hello World')", "import random", "total_lines = sum(1 for line in f)","{word}: {count}","россия",
-             "😎","johnsmith@gmail.com", "password", "https://classroom.google.com/c/ODQyNDM1MTYxNjUz/a/ODY0NjcxMjc3NDEw/details", "Clipboard Entry 10!"]
+with open('clipboard.txt', 'r', encoding='utf-8') as f: #reads clipboard file and closes when finished
+    clipboard = [line.strip() for line in f.readlines()] #removes whitespace, and new lines creating list of entries created from .txt file
+
+with open("clipboard.txt", "w", encoding="utf-8") as file: #save clipboard entries
+    for entry in clipboard:
+        file.write(entry + "\n")
+
+with open("clipboard.txt", "r", encoding="utf-8") as file: #load clipboard entries
+    clipboard = file.read().splitlines() #puts clipboard entries on other lines
 
 root = tk.Tk() #create root window
 
 # root window title and dimension
 root.title("PastClip") #program name
-root.geometry('375x440') #width x height window of 375x440px
 """
 x210 for 1
 x230 for 2
@@ -20,8 +27,27 @@ x340 for 6
 x360 for 7
 x390 for 8
 x410 for 9
-x500 for 10
+x440 for 10
 """
+root.update_idletasks()
+
+height_dimensions = { #amount of clipboard entries
+    1: 210,
+    2: 230,
+    3: 260,
+    4: 280,
+    5: 310,
+    6: 340,
+    7: 360,
+    8: 390,
+    9: 410,
+    10:440
+}
+
+num_entries = len(clipboard)
+window_height = height_dimensions.get(num_entries) #retrieves dict value corresponing with key
+root.geometry(f"375x{window_height}") #sets dimensions for window based on how many entries exist
+
 i = 0 #integer that will change based on iteration
 
 #storage for easy tracking
@@ -59,7 +85,7 @@ def check_length():
     return width_within_300, width_beyond_300
 
 def clipboard_clicked(event):
-    print("hi")
+    pyperclip.copy(event.widget.cget("text")) #copies entries when clicked
 
 rgb = root.winfo_rgb("systemControlAccentColor") #retrieves MacOS accent colour
 
@@ -77,17 +103,20 @@ label = tk.Label(root, text="Select the clip to copy the entry to your clipboard
 label.pack() #pack arranges label vertically
 divider = tk.Frame(root, height=2, bg="#808080") #created divider that goes from edge to edge in gray
 divider.pack(fill="x", pady=10) #fills horizontally with margin of padding 10px on both sides
-for i in range(10): #creates 10 clipboard entries
+for i in range(len(clipboard)): #creates 10 clipboard entries
     row_frame = tk.Frame(root) #create row frame for every clipboard entry
     row_frame.columnconfigure(0, weight=1) #column 0 expands, and absorbs space in between column 1
     row_frame.pack(fill="x", padx=15, pady=2) #stores rows vertically with invisible box stretching across to add a padding of 10px across and 2 up and down
     row_frames.append(row_frame) #stores for easy deletion
     width_within_300, width_beyond_300 = check_length()
-    clipboard_text_button= tk.Label(row_frame, text=f"{width_within_300}", wraplength=300, anchor="w", justify="left", bg="#435363",activebackground=f"{hex_colour}",) #clipboard entry label wihin row_frame is added with a restriction of 220px across, whilst left aligned even if multiple lines long as well as space on right for commands
+    clipboard_text_button = tk.Label(row_frame, text=f"{width_within_300}", wraplength=300, anchor="w", justify="left", bg="#435363",activebackground=f"{hex_colour}",) #clipboard entry label wihin row_frame is added with a restriction of 220px across, whilst left aligned even if multiple lines long as well as space on right for commands
     clipboard_text_button.bind("<Enter>", on_hover)
     clipboard_text_button.bind("<Leave>", on_leave)
     clipboard_text_button.grid(row=0, column=0, sticky="ew", padx=(0, 0)) #uses grid for rows and column easier placing labels at 0,0 within row frame whilst being stretched from west to east and with padding of 10 sides on bot
-    clipboard_text_button.bind("<Button-1>", clipboard_clicked)
+    clipboard_text_button.bind("<Button-1>", clipboard_clicked) #when left clicked done run clipboard_clicked
+    clipboard_text_button.bind("<Enter>", on_hover)
+    clipboard_text_button.bind("<Leave>", on_leave)
+    clipboard_text_button.bind("<Command-Key-1>", clipboard_clicked) #when left clicked done run clipboard_clicked
     command = tk.Label(row_frame, text=f"⌘ {i}", fg="#B1B1B1", anchor="e", justify="right") #separate label created within same row of light gray right aligned
     command.grid(row=0, column=1, sticky="e", padx=(0, 0)) #command text placed in next column right aligned
     commands.append(command)
@@ -102,4 +131,7 @@ quit_button = tk.Button(root, text="Quit", bg="#808080", command=quit_program)
 quit_button.pack(fill="x", padx=80, pady=5)
 divider = tk.Frame(root, height=2, bg="#808080")
 divider.pack(fill="x", pady=10)
+
+
+
 root.mainloop() # execute Tkinter
