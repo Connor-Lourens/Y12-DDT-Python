@@ -15,21 +15,7 @@ with open("clipboard.txt", "r", encoding="utf-8") as file: #load clipboard entri
 
 root = tk.Tk() #create root window
 
-# root window title and dimension
 root.title("PastClip") #program name
-"""
-x210 for 1
-x230 for 2
-x260 for 3
-x280 for 4
-x310 for 5
-x340 for 6
-x360 for 7
-x390 for 8
-x410 for 9
-x440 for 10
-"""
-root.update_idletasks()
 
 height_dimensions = { #amount of clipboard entries
     1: 210,
