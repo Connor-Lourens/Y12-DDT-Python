@@ -1,1 +1,0 @@
-with open("clipboard.txt", "r", encoding="utf-8") as file:
