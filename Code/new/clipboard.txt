@@ -1,0 +1,31 @@
+clipboard.txt
+def update_clear_button():
+    if clipboard: #shows button when entries exist
+        delete.pack(fill="x", padx=80, pady=5, before=quit_button)
+        quit_divider.pack(fill="x", pady=10, before=quit_button)
+    else:
+        delete.pack_forget() #hides button when no entries exist
+        quit_divider.pack_forget()
+f current_clipboard != last_clipboard:
+        last_clipboard = current_clipboard
+        if current_clipboard.strip(): #removes whitespace and empty entries
+            if current_clipboard in clipboard: #checks if entry already exists
+                clipboard.remove(current_clipboard) #removes duplicate entry
+            clipboard.insert(0, current_clipboard) #adds newest entry to beginning
+            del clipboard[10:] #removes entries past the first 10
+            with open("clipboard.txt", "w", encoding="utf-8") as file: #saves clipboard entries
+                file.write("\n".join(clipboard) + ("\n" if clipboard else ""))
+            if empty_label is not None: #removes empty message 
+count = clipboard.count("\n")
+
+window_height = height_dimensions.get(num_entries, 440) #retrieves dict value corresponing with key, if neither sets to 440
+
+    global empty_label
+
+num_entries = len(clipboard) #counts list entries
+
+    6: 340,
+
+    0: 140,
+
+root.title("PastClip")

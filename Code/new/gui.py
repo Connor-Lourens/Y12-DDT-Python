@@ -9,7 +9,7 @@ root = tk.Tk()
 root.title("PastClip")
 height_dimensions = { #amount of clipboard entries
     0: 140,
-    1: 210,
+    1: 140,
     2: 230,
     3: 260,
     4: 300,
@@ -23,9 +23,8 @@ height_dimensions = { #amount of clipboard entries
 empty_label = None
 display_clear_entries = False
 
-def update_time():
-    time_label.config(text=get_time())
-    root.after(1000, update_time)
+def get_time():
+    return datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
 with open("clipboard.txt", "r", encoding="utf-8") as file: #opens clipboard.txt to read
     clipboard = [line.strip() for line in file if line.strip()] #reads through every line removing empty white spaces and entries then adding to clipboard the result
@@ -91,7 +90,9 @@ def check_clipboard():
             else:
                 row_frame.pack(fill="x", padx=15, pady=2, before=entries_bottom_divider)
             row_frames.insert(0, row_frame) #stores frame for easy deletion later
-            clipboard_text_button = tk.Label(row_frame, text=current_clipboard, wraplength=300, anchor="w", justify="left", bg="#435363", activebackground=hex_colour, fg="#FFFFFF")
+            clean_text = current_clipboard.replace("\n", " ")
+            clean_text = current_clipboard.replace("\n", " ")
+            clipboard_text_button = tk.Label(row_frame, text=clean_text, height=1, anchor="w", justify="left", bg="#435363", activebackground=hex_colour, fg="#FFFFFF")
             clipboard_text_button.grid(row=0, column=0, sticky="ew")
             Hovertip(clipboard_text_button, current_clipboard) #shows full entry when hovering
             clipboard_text_button.bind("<Button-1>", clipboard_clicked) #copies entry when clicked
@@ -166,8 +167,9 @@ else:
         row_frame.columnconfigure(1, minsize=45)
         row_frame.pack(fill="x", padx=15, pady=2) #stores rows vertically with invisible box stretching across to add a padding of 10px across and 2 up and down
         row_frames.append(row_frame)
-        clipboard_text_button = tk.Label(row_frame, text=clipboard[i], wraplength=300, anchor="w", justify="left", bg="#435363", activebackground=f"{hex_colour}", fg="#FFFFFF") #clipboard entry label wihin row_frame is added with a restriction of 300px across, whilst left aligned even if multiple lines long as well as space on right for commands
-        Hovertip(clipboard_text_button, clipboard[i])
+        clipboard_text_button = tk.Label(row_frame, text=clipboard[i], height=1, anchor="w", justify="left", bg="#435363", activebackground=f"{hex_colour}", fg="#FFFFFF") #clipboard entry label wihin row_frame is added with a restriction of 300px across, whilst left aligned even if multiple lines long as well as space on right for commands
+        dates.append(get_time())
+        Hovertip(clipboard_text_button, dates[i])
         clipboard_text_button.bind("<Enter>", on_hover, add="+") #creates hover bindings, and preserves old ones
         clipboard_text_button.bind("<Leave>", on_leave, add="+")
         clipboard_text_button.grid(row=0, column=0, sticky="ew", padx=(0, 0)) #uses grid for rows and column easier placing labels at 0,0 within row frame whilst being stretched from west to east and with padding of 10 sides on bot
@@ -196,10 +198,6 @@ def update_clear_button():
 divider = tk.Frame(root, height=2, bg="#808080")
 divider.pack(fill="x", pady=10)
 
-time_label = tk.Label(root, text=get_time())
-time_label.pack()
-
-update_time()
 check_clipboard()
 update_clear_button()
 root.mainloop() # execute
