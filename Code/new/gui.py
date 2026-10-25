@@ -54,6 +54,7 @@ def quit_program(): #function when quit button is clicked
     root.destroy()
 
 def clear_clipboard():
+    global empty_label
     empty_label = tk.Label(root, text="Clipboard is empty")
     empty_label.pack(before=row_frames[0]) #places empty_label before label[i] is removed
     for row_frame in row_frames:
@@ -62,11 +63,10 @@ def clear_clipboard():
     commands.clear()
     labels.clear()
     clipboard.clear()
-    delete.destroy()
-    quit_divider.destroy()
     root.geometry('375x140')
     with open("clipboard.txt", "w", encoding="utf-8") as file:
         file.write("")
+    update_clear_button()
 
 def check_clipboard():
     global last_clipboard, empty_label
@@ -89,7 +89,7 @@ def check_clipboard():
             if row_frames: #places new row before existing entries
                 row_frame.pack(fill="x", padx=15, pady=2, before=row_frames[0])
             else:
-                row_frame.pack(fill="x", padx=15, pady=2, before=entries_divider)
+                row_frame.pack(fill="x", padx=15, pady=2, before=entries_bottom_divider)
             row_frames.insert(0, row_frame) #stores frame for easy deletion later
             clipboard_text_button = tk.Label(row_frame, text=current_clipboard, wraplength=300, anchor="w", justify="left", bg="#435363", activebackground=hex_colour, fg="#FFFFFF")
             clipboard_text_button.grid(row=0, column=0, sticky="ew")
@@ -111,6 +111,7 @@ def check_clipboard():
                 command_label.config(text=f"⌘ {shortcut_number}")
 
             root.geometry(f"375x{height_dimensions.get(len(clipboard), 440)}") #updates window height
+            update_clear_button
 
     root.after(1000, check_clipboard) #checks for new clipboard entries every second
 
@@ -177,17 +178,21 @@ else:
         commands.append(command)
         labels.append(clipboard_text_button) #adds individual entries to list to store for later
 
-divider = tk.Frame(root, height=2, bg="#808080")
-divider.pack(fill="x", pady=10)
-delete = tk.Button(root, text="Clear all clipboard entries", command=clear_clipboard) #creates interactable button for deleting clipboard entries
-if display_clear_entries:
-    delete.pack(fill="x", padx=80, pady=5)
-    quit_divider = tk.Frame(root, height=2, bg="#808080")
-    quit_divider.pack(fill="x", pady=10)
-else:
-    delete.pack_forget()
+entries_bottom_divider = tk.Frame(root, height=2, bg="#808080")
+entries_bottom_divider.pack(fill="x", pady=10)
+delete = tk.Button(root, text="Clear all clipboard entries", command=clear_clipboard)
+quit_divider = tk.Frame(root, height=2, bg="#808080")
 quit_button = tk.Button(root, text="Quit", bg="#808080", command=quit_program)
 quit_button.pack(fill="x", padx=80, pady=5)
+
+def update_clear_button():
+    if clipboard: #shows button when entries exist
+        delete.pack(fill="x", padx=80, pady=5, before=quit_button)
+        quit_divider.pack(fill="x", pady=10, before=quit_button)
+    else:
+        delete.pack_forget() #hides button when no entries exist
+        quit_divider.pack_forget()
+
 divider = tk.Frame(root, height=2, bg="#808080")
 divider.pack(fill="x", pady=10)
 
@@ -195,7 +200,6 @@ time_label = tk.Label(root, text=get_time())
 time_label.pack()
 
 update_time()
-
 check_clipboard()
-
+update_clear_button()
 root.mainloop() # execute
