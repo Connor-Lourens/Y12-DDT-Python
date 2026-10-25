@@ -20,6 +20,7 @@ height_dimensions = { #amount of clipboard entries
     9: 410,
     10: 440
 }
+empty_label = None
 display_clear_entries = False
 
 def update_time():
@@ -68,38 +69,71 @@ def clear_clipboard():
         file.write("")
 
 def check_clipboard():
-    global last_clipboard
+    global last_clipboard, empty_label
     current_clipboard = pyperclip.paste()
-    
     if current_clipboard != last_clipboard:
         last_clipboard = current_clipboard
-        if current_clipboard.strip(): #removes whitespace, and empty entries
-            clipboard.insert(0, current_clipboard) #adds most recent clipboard entry to beginning of list
-
-            with open("clipboard.txt", "w", encoding="utf-8") as file:
-                file.write("\n".join(clipboard) + "\n")
-
-            #create a new row for the new clipboard entry
-            row_frame = tk.Frame(root)
-            row_frame.pack(fill="x", padx=15, pady=2)
+        if current_clipboard.strip(): #removes whitespace and empty entries
+            if current_clipboard in clipboard: #checks if entry already exists
+                clipboard.remove(current_clipboard) #removes duplicate entry
+            clipboard.insert(0, current_clipboard) #adds newest entry to beginning
+            del clipboard[10:] #removes entries past the first 10
+            with open("clipboard.txt", "w", encoding="utf-8") as file: #saves clipboard entries
+                file.write("\n".join(clipboard) + ("\n" if clipboard else ""))
+            if empty_label is not None: #removes empty message if it exists
+                empty_label.destroy()
+                empty_label = None
+            row_frame = tk.Frame(root) #creates a new row for the new clipboard entry
+            row_frame.columnconfigure(0, weight=1, minsize=280)
+            row_frame.columnconfigure(1, minsize=45)
+            if row_frames: #places new row before existing entries
+                row_frame.pack(fill="x", padx=15, pady=2, before=row_frames[0])
+            else:
+                row_frame.pack(fill="x", padx=15, pady=2, before=entries_divider)
             row_frames.insert(0, row_frame) #stores frame for easy deletion later
+            clipboard_text_button = tk.Label(row_frame, text=current_clipboard, wraplength=300, anchor="w", justify="left", bg="#435363", activebackground=hex_colour, fg="#FFFFFF")
+            clipboard_text_button.grid(row=0, column=0, sticky="ew")
+            Hovertip(clipboard_text_button, current_clipboard) #shows full entry when hovering
+            clipboard_text_button.bind("<Button-1>", clipboard_clicked) #copies entry when clicked
+            clipboard_text_button.bind("<Enter>", on_hover)
+            clipboard_text_button.bind("<Leave>", on_leave)
+            labels.insert(0, clipboard_text_button) #stores label for easy tracking
+            shortcut_number = i + 1 if i < 9 else 0
+            command = tk.Label(row_frame, text=f"⌘ {shortcut_number}", fg="#B1B1B1", anchor="e", justify="right")
+            command.grid(row=0, column=1, sticky="e") #places shortcut label in second column
+            commands.insert(0, command) #stores command for easy tracking
+            if len(row_frames) > 10: #removes oldest row if more than 10 entries
+                row_frames.pop().destroy()
+                labels.pop()
+                commands.pop()
+            for index, command_label in enumerate(commands): #updates shortcut numbers by checking if in list of numbers for commands
+                shortcut_number = index + 1 if index < 9 else 0
+                command_label.config(text=f"⌘ {shortcut_number}")
 
-            label = tk.Label(row_frame, text=current_clipboard, wraplength=300, anchor="w", justify="left", bg="#435363", fg="white")
-            label.pack(fill="x")
-            label.bind("<Button-1>", clipboard_clicked) #copies entry when clicked
-            label.bind("<Enter>", on_hover)
-            label.bind("<Leave>", on_leave)
-            labels.insert(0, label) #stores label for easy tracking
-            command = tk.Label(row_frame, text=f"⌘ {i}", fg="#B1B1B1", anchor="e", justify="right") #separate label created within same row of light gray right aligned
-            command.pack(row=0, column=1, sticky="e", padx=(0, 0)) #command text placed in next column right aligned
-            commands.append(command)
-            labels.append(label) #adds individual labels to list to store for later
+            root.geometry(f"375x{height_dimensions.get(len(clipboard), 440)}") #updates window height
 
-
-    root.after(500, check_clipboard) #every 500ms checks if there are new clipboard entries
+    root.after(1000, check_clipboard) #checks for new clipboard entries every second
 
 def clipboard_clicked(event):
-    pyperclip.copy(event.widget.cget("text")) #copies entries when clicked
+    global last_clipboard
+    selected_entry = event.widget.cget("text") #retrieves text from selected entry upon clicking
+    pyperclip.copy(selected_entry) #copies text to clipboard
+    last_clipboard = selected_entry
+
+def copy_history_entry(index):
+    global last_clipboard
+    if index < len(clipboard): #assesses whether index is less than the amount of entries in clipboard list
+        selected_entry = clipboard[index] #sets selected_entry as equal to clipboard entry at certain index
+        pyperclip.copy(selected_entry) 
+        last_clipboard = selected_entry
+
+for index in range(10):
+    shortcut_number = index + 1 if index < 9 else 0
+
+    root.bind_all(
+        f"<Command-KeyPress-{shortcut_number}>",
+        lambda event, index=index: copy_history_entry(index)
+    )
 
 rgb = root.winfo_rgb("systemControlAccentColor") #retrieves MacOS accent colour
 
@@ -118,28 +152,31 @@ def get_time():
 #all widgets will be here
 label = tk.Label(root, text="Select the clip to copy the entry to your clipboard!", fg="#B1B1B1") #creates text in root layer
 label.pack() #pack arranges label vertically
-divider = tk.Frame(root, height=2, bg="#808080") #created divider that goes from edge to edge in gray
-divider.pack(fill="x", pady=10) #fills horizontally with margin of padding 10px on both sides
+entries_divider = tk.Frame(root, height=2, bg="#808080") #created divider that goes from edge to edge in gray
+entries_divider.pack(fill="x", pady=10) #fills horizontally with margin of padding 10px on both sides
 if clipboard == []:
     empty_label = tk.Label(root, text="Clipboard is empty")
     empty_label.pack()
     display_clear_entries = False
 else:
-    if len(clipboard) < 11:
-        for i in range(len(clipboard)): #creates 10 clipboard entries
-            row_frame = tk.Frame(root) #create row frame for every clipboard entry
-            row_frame.columnconfigure(0, weight=1) #column 0 expands, and absorbs space in between column 1
-            row_frame.pack(fill="x", padx=15, pady=2) #stores rows vertically with invisible box stretching across to add a padding of 10px across and 2 up and down
-            row_frames.append(row_frame) #stores for easy deletion
-            clipboard_text_button = tk.Label(row_frame, text=clipboard[i], wraplength=300, anchor="w", justify="left", bg="#435363",activebackground=f"{hex_colour}",) #clipboard entry label wihin row_frame is added with a restriction of 220px across, whilst left aligned even if multiple lines long as well as space on right for commands
-            clipboard_text_button.bind("<Enter>", on_hover)
-            clipboard_text_button.bind("<Leave>", on_leave)
-            clipboard_text_button.grid(row=0, column=0, sticky="ew", padx=(0, 0)) #uses grid for rows and column easier placing labels at 0,0 within row frame whilst being stretched from west to east and with padding of 10 sides on bot
-            clipboard_text_button.bind("<Button-1>", clipboard_clicked) #when left clicked done run clipboard_clicked
-            command = tk.Label(row_frame, text=f"⌘ {i}", fg="#B1B1B1", anchor="e", justify="right") #separate label created within same row of light gray right aligned
-            command.grid(row=0, column=1, sticky="e", padx=(0, 0)) #command text placed in next column right aligned
-            commands.append(command)
-            labels.append(label) #adds individual labels to list to store for later
+    for i in range(min(len(clipboard), 10)): #creates 10 clipboard entries
+        row_frame = tk.Frame(root) #create row frame for every clipboard entry
+        row_frame.columnconfigure(0, weight=1, minsize=280) #column 0 takes space it needs horizontally within limit of weight 1 with minimum size of 280px
+        row_frame.columnconfigure(1, minsize=45)
+        row_frame.pack(fill="x", padx=15, pady=2) #stores rows vertically with invisible box stretching across to add a padding of 10px across and 2 up and down
+        row_frames.append(row_frame)
+        clipboard_text_button = tk.Label(row_frame, text=clipboard[i], wraplength=300, anchor="w", justify="left", bg="#435363", activebackground=f"{hex_colour}", fg="#FFFFFF") #clipboard entry label wihin row_frame is added with a restriction of 300px across, whilst left aligned even if multiple lines long as well as space on right for commands
+        Hovertip(clipboard_text_button, clipboard[i])
+        clipboard_text_button.bind("<Enter>", on_hover, add="+") #creates hover bindings, and preserves old ones
+        clipboard_text_button.bind("<Leave>", on_leave, add="+")
+        clipboard_text_button.grid(row=0, column=0, sticky="ew", padx=(0, 0)) #uses grid for rows and column easier placing labels at 0,0 within row frame whilst being stretched from west to east and with padding of 10 sides on bot
+        clipboard_text_button.bind("<Button-1>", clipboard_clicked) #when left clicked done run clipboard_clicked
+        shortcut_number = i + 1 if i < 9 else 0
+        command = tk.Label(row_frame, text=f"⌘ {shortcut_number}", fg="#B1B1B1", anchor="e", justify="right")
+        command.grid(row=0, column=1, sticky="e", padx=(0, 0)) #command text placed in next column right aligned
+        commands.append(command)
+        labels.append(clipboard_text_button) #adds individual entries to list to store for later
+
 divider = tk.Frame(root, height=2, bg="#808080")
 divider.pack(fill="x", pady=10)
 delete = tk.Button(root, text="Clear all clipboard entries", command=clear_clipboard) #creates interactable button for deleting clipboard entries
