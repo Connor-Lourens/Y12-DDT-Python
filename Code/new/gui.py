@@ -7,10 +7,12 @@ from datetime import datetime
 
 root = tk.Tk()
 root.title("PastClip")
-height_dimensions = { #amount of clipboard entries
-    0: 140,
-    1: 140,
-    2: 230,
+root.option_add("*Font", "Inter 11")
+
+height_dimensions = { 
+    0: 160,
+    1: 220,
+    2: 200,
     3: 260,
     4: 300,
     5: 320,
@@ -18,7 +20,7 @@ height_dimensions = { #amount of clipboard entries
     7: 360,
     8: 390,
     9: 410,
-    10: 440
+    10: 480
 }
 empty_label = None
 display_clear_entries = False
@@ -83,14 +85,15 @@ def check_clipboard():
                 empty_label.destroy()
                 empty_label = None
             row_frame = tk.Frame(root) #creates a new row for the new clipboard entry
-            row_frame.columnconfigure(0, weight=1, minsize=280)
+            row_frame.columnconfigure(0,
+            weight=1, minsize=280)
             row_frame.columnconfigure(1, minsize=45)
             if row_frames: #places new row before existing entries
                 row_frame.pack(fill="x", padx=15, pady=2, before=row_frames[0])
             else:
                 row_frame.pack(fill="x", padx=15, pady=2, before=entries_bottom_divider)
             row_frames.insert(0, row_frame) #stores frame for easy deletion later
-            clean_text = current_clipboard.replace("\n", " ")
+            global clean_text
             clean_text = current_clipboard.replace("\n", " ")
             clipboard_text_button = tk.Label(row_frame, text=clean_text, height=1, anchor="w", justify="left", bg="#435363", activebackground=hex_colour, fg="#FFFFFF")
             clipboard_text_button.grid(row=0, column=0, sticky="ew")
@@ -153,9 +156,9 @@ def get_time():
 
 #all widgets will be here
 label = tk.Label(root, text="Select the clip to copy the entry to your clipboard!", fg="#B1B1B1") #creates text in root layer
-label.pack() #pack arranges label vertically
-entries_divider = tk.Frame(root, height=2, bg="#808080") #created divider that goes from edge to edge in gray
-entries_divider.pack(fill="x", pady=10) #fills horizontally with margin of padding 10px on both sides
+label.pack(pady=(10, 0)) #pack arranges label vertically
+entries_divider = tk.Frame(root, width=350, height=1, bg="#808080") #created divider that goes from edge to edge in gray
+entries_divider.pack(pady=10) #fills horizontally with margin of padding 10px on both sides
 if clipboard == []:
     empty_label = tk.Label(root, text="Clipboard is empty")
     empty_label.pack()
@@ -167,7 +170,7 @@ else:
         row_frame.columnconfigure(1, minsize=45)
         row_frame.pack(fill="x", padx=15, pady=2) #stores rows vertically with invisible box stretching across to add a padding of 10px across and 2 up and down
         row_frames.append(row_frame)
-        clipboard_text_button = tk.Label(row_frame, text=clipboard[i], height=1, anchor="w", justify="left", bg="#435363", activebackground=f"{hex_colour}", fg="#FFFFFF") #clipboard entry label wihin row_frame is added with a restriction of 300px across, whilst left aligned even if multiple lines long as well as space on right for commands
+        clipboard_text_button = tk.Label(row_frame, text=clean_text, height=1, anchor="w", justify="left", bg="#435363", activebackground=f"{hex_colour}", fg="#FFFFFF") #clipboard entry label wihin row_frame is added with a restriction of 300px across, whilst left aligned even if multiple lines long as well as space on right for commands
         dates.append(get_time())
         Hovertip(clipboard_text_button, dates[i])
         clipboard_text_button.bind("<Enter>", on_hover, add="+") #creates hover bindings, and preserves old ones
@@ -180,23 +183,23 @@ else:
         commands.append(command)
         labels.append(clipboard_text_button) #adds individual entries to list to store for later
 
-entries_bottom_divider = tk.Frame(root, height=2, bg="#808080")
-entries_bottom_divider.pack(fill="x", pady=10)
+entries_bottom_divider = tk.Frame(root, width=350, height=1, bg="#808080")
+entries_bottom_divider.pack(pady=10)
 delete = tk.Button(root, text="Clear all clipboard entries", command=clear_clipboard)
-quit_divider = tk.Frame(root, height=2, bg="#808080")
+quit_divider = tk.Frame(root, width=350, height=1, bg="#808080")
 quit_button = tk.Button(root, text="Quit", bg="#808080", command=quit_program)
-quit_button.pack(fill="x", padx=80, pady=5)
+quit_button.pack(padx=80, pady=5)
 
 def update_clear_button():
     if clipboard: #shows button when entries exist
-        delete.pack(fill="x", padx=80, pady=5, before=quit_button)
-        quit_divider.pack(fill="x", pady=10, before=quit_button)
+        delete.pack(padx=80, pady=5, before=quit_button)
+        quit_divider.pack(pady=10, before=quit_button)
     else:
         delete.pack_forget() #hides button when no entries exist
         quit_divider.pack_forget()
 
-divider = tk.Frame(root, height=2, bg="#808080")
-divider.pack(fill="x", pady=10)
+divider = tk.Frame(root, width=350, height=1, bg="#808080")
+divider.pack(pady=10)
 
 check_clipboard()
 update_clear_button()
